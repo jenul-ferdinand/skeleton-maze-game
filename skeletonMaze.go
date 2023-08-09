@@ -51,10 +51,10 @@ func main() {
 		ySize: len(mazeMap),
 	}
 
-	exit := exit {
-		image: icon { 
+	exit := exit{
+		image: icon{
 			xPos: 5,
-			yPos: len(mazeMap),
+			yPos: len(mazeMap) - 1,
 			icon: "E",
 		},
 	}
@@ -75,6 +75,7 @@ func main() {
 	printables := [] *icon {&player.image, &key.image, &exit.image}
 	for running {
 		draw(&gameMaze, printables)
+		move(&gameMaze, player)
 	}
 }
 
@@ -91,31 +92,31 @@ func newPlayer(xPos int, yPos int) *player {
 	return &p
 }
 
-func draw(gameMazeTrue *maze, icons [] *icon) {
+func draw(gameMazeTrue *maze, icons []*icon) {
+	gameMaze := maze{
+		maze:  make([][]string, len(gameMazeTrue.maze)),
+		xSize: gameMazeTrue.xSize,
+		ySize: gameMazeTrue.ySize,
+	}
 
-	var gameMaze maze
-
-	gameMaze.maze = make([][] string, len(gameMazeTrue.maze))
-
-	for i := gameMazeTrue.maze {
-		gameMaze.maze[i] = make([] string, len(gameMazeTrue.maze[i]))
-
+	for i := range gameMazeTrue.maze {
+		gameMaze.maze[i] = make([]string, len(gameMazeTrue.maze[i]))
 		copy(gameMaze.maze[i], gameMazeTrue.maze[i])
 	}
-	
+
 	for _, s := range icons {
 		gameMaze.maze[s.yPos][s.xPos] = s.icon
 	}
 
 	for row := range gameMaze.maze {
 		for col := range gameMaze.maze[row] {
-			print(gameMaze.maze[row][col])
+			fmt.Print(gameMaze.maze[row][col] + " ")
 		}
-
-		// New line end of every row
-		print("\n")
+		// New line at the end of every row
+		fmt.Println()
 	}
 }
+
 
 func move(gameMaze *maze, player *player) {
 
